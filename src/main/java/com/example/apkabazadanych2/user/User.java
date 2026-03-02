@@ -2,10 +2,13 @@ package com.example.apkabazadanych2.user;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 
 @Entity
 @Table(name = "users")
-public class Users {
+public class User {
     @Id
     @SequenceGenerator(
             name = "user_sequence",
@@ -23,17 +26,21 @@ public class Users {
     public String Login;
     public String Password;
     public String Email;
+    public LocalDate DateOfBirth;
 
-    public Users(Long ID_User, String name, String surname, String login, String password, String email) {
-        this.ID_User = ID_User;
-        this.Name = name;
-        this.Surname = surname;
-        this.Login = login;
-        this.Password = password;
-        this.Email = email;
+    @Transient
+    public Integer Age;
+
+    public User(String name, String surname, String login, String password, String email, LocalDate dateOfBirth) {
+        Name = name;
+        Surname = surname;
+        Login = login;
+        Password = password;
+        Email = email;
+        DateOfBirth = dateOfBirth;
     }
 
-    public Users() {
+    public User() {
 
     }
 
@@ -83,5 +90,9 @@ public class Users {
 
     public void setEmail(String email) {
         Email = email;
+    }
+
+    public Integer getAge(){
+        return Period.between(DateOfBirth, LocalDate.now()).getYears();
     }
 }
