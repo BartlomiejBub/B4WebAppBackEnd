@@ -1,34 +1,112 @@
 package com.example.apkabazadanych2.user;
 
+import com.example.apkabazadanych2.email.EmailSender;
+import com.example.apkabazadanych2.registration.EmailValidator;
+import com.example.apkabazadanych2.registration.token.ConfirmationToken;
+import com.example.apkabazadanych2.registration.token.ConfirmationTokenService;
+import com.example.apkabazadanych2.security.PasswordEncoder;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
-public class UserService {
+@AllArgsConstructor
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public List<User> getUsers(){
-        return userRepository.findAll();
-    }
+    private final PasswordEncoder passwordEncoder;
+    private final EmailValidator emailValidator;
+    private final ConfirmationTokenService confirmationTokenService;
+    private final EmailSender emailSender;
 
     public void addNewUser(User user){
         Optional<User> userByLogin = userRepository.findByLogin(user.getLogin());
+        Optional<User> userByEmail = userRepository.findByEmail(user.getEmail());
 
         if(userByLogin.isPresent()) {
-            throw new IllegalStateException("jest juz taki");
+            throw new IllegalStateException("User with this login already exists");
+        } else if (userByEmail.isPresent()) {
+            throw new IllegalStateException("User with this email already exists");
         } else {
-            userRepository.save(user);
+            if(!emailValidator.test(user.getEmail())){
+                throw new IllegalStateException("Not valid email");
+            } else {
+
+                user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword()));
+                userRepository.save(user);
+
+                String token =  UUID.randomUUID().toString();
+                ConfirmationToken confirmationToken = new ConfirmationToken(token, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
+                confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+                String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
+                emailSender.sendEmail(user.getEmail(), buildEmail(user.getName(), link));
+            }
         }
+    }
+
+    @Transactional
+    public String confirmRegistrationToken(String token){
+        ConfirmationToken confirmationToken = confirmationTokenService.getToken(token).orElseThrow(() -> new IllegalStateException("Invalid token"));
+        if(confirmationToken.getConfirmedAt() != null){
+            throw new IllegalStateException("email is already confirmed");
+        }
+
+        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+
+        if(expiredAt.isBefore(LocalDateTime.now())){
+            throw new IllegalStateException("token is expired");
+        }
+
+        confirmationTokenService.setConfirmedAt(confirmationToken);
+        confirmationToken.getUser().setEnabled(true);
+        return "confirmed";
+    }
+
+    private String buildEmail(String name, String link) {
+        return """
+                <div style="font-family: Helvetica, Arial, sans-serif; font-size: 16px; margin: 0; background-color: #f4f4f4; padding: 20px;">
+                    <table role="presentation" width="100%%" style="border-collapse: collapse; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <tr>
+                            <td style="padding: 30px; background-color: #007bff; text-align: center; color: #ffffff;">
+                                <h1 style="margin: 0; font-size: 24px;">Witaj w naszej aplikacji!</h1>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 30px; text-align: left; color: #333333;">
+                                <p style="margin: 0 0 20px 0; font-size: 18px;">Cześć <strong>%s</strong>,</p>
+                                <p style="margin: 0 0 20px 0; line-height: 1.5;">
+                                    Dziękujemy za rejestrację. Aby aktywować swoje konto i uzyskać pełny dostęp do systemu, kliknij poniższy przycisk:
+                                </p>
+                                <div style="text-align: center; margin: 30px 0;">
+                                    <a href="%s" style="background-color: #007bff; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Aktywuj konto</a>
+                                </div>
+                                <p style="margin: 0; font-size: 14px; color: #777777;">
+                                    Ten link wygaśnie za 15 minut. Jeśli to nie Ty zakładałeś konto, zignoruj tę wiadomość.
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                """.formatted(name, link);
+    }
+
+
+
+    public List<User> getUsers(){
+        return userRepository.findAll();
     }
 
     public void deleteUser(Long userId) {
@@ -40,5 +118,13 @@ public class UserService {
     }
 
     public void updateUser(Long userId, String name, String email) {
+
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+        return userRepository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found: " +username));
     }
 }

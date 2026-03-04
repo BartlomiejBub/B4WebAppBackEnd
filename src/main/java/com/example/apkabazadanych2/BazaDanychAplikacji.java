@@ -10,10 +10,10 @@ import java.util.List;
 
 @SpringBootApplication
 
-public class ApkaBazaDanych2Application {
+public class BazaDanychAplikacji {
 
     public static void main(String[] args) {
-        SpringApplication.run(ApkaBazaDanych2Application.class, args);
+        SpringApplication.run(BazaDanychAplikacji.class, args);
     }
 
 }

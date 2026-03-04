@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Testowy API Użytkowników</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+        .box { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; background-color: #f9f9f9;}
+        input { margin-bottom: 10px; padding: 5px; width: 200px; display: block; }
+        button { padding: 8px 15px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px;}
+        button:hover { background-color: #0056b3; }
+        pre { background: #eee; padding: 10px; border-radius: 4px; max-height: 200px; overflow-y: auto;}
+    </style>
+</head>
+<body>
+
+<h1>Zarządzanie Użytkownikami (Spring Boot)</h1>
+
+<div class="box">
+    <h3>1. Lista wszystkich użytkowników (GET)</h3>
+    <button onclick="getUsers()">Pobierz użytkowników</button>
+    <pre id="get-result">Wynik pojawi się tutaj...</pre>
+</div>
+
+<div class="box">
+    <h3>2. Dodaj nowego użytkownika (POST)</h3>
+    <input type="text" id="post-name" placeholder="Imię (Name)">
+    <input type="text" id="post-surname" placeholder="Nazwisko (Surname)">
+    <input type="text" id="post-login" placeholder="Login">
+    <input type="password" id="post-password" placeholder="Hasło (Password)">
+    <input type="email" id="post-email" placeholder="Email">
+    <button onclick="createUser()">Dodaj Użytkownika</button>
+    <pre id="post-result">Status dodawania...</pre>
+</div>
+
+<div class="box">
+    <h3>3. Aktualizuj użytkownika (PUT)</h3>
+    <input type="number" id="put-id" placeholder="ID Użytkownika do zmiany">
+    <input type="text" id="put-name" placeholder="Nowe Imię (opcjonalnie)">
+    <input type="email" id="put-email" placeholder="Nowy Email (opcjonalnie)">
+    <button onclick="updateUser()">Zaktualizuj</button>
+    <pre id="put-result">Status aktualizacji...</pre>
+</div>
+
+<div class="box">
+    <h3>4. Usuń użytkownika (DELETE)</h3>
+    <input type="number" id="delete-id" placeholder="ID Użytkownika do usunięcia">
+    <button onclick="deleteUser()">Usuń</button>
+    <pre id="delete-result">Status usuwania...</pre>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api/v1/user';
+    const REGISTRATION_URL = 'http://localhost:8080/api/v1/registration';
+
+    // --- GET ---
+    function getUsers() {
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => document.getElementById('get-result').innerText = JSON.stringify(data, null, 2))
+            .catch(err => document.getElementById('get-result').innerText = 'Błąd: ' + err);
+    }
+
+    // --- POST ---
+    function createUser() {
+        const newUser = {
+            name: document.getElementById('post-name').value,
+            surname: document.getElementById('post-surname').value,
+            login: document.getElementById('post-login').value,
+            password: document.getElementById('post-password').value,
+            email: document.getElementById('post-email').value
+        };
+
+        fetch(REGISTRATION_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newUser)
+        })
+        .then(res => {
+            if (res.ok) {
+                document.getElementById('post-result').innerText = "Sukces! Dodano użytkownika.";
+                getUsers(); // Odświeżamy listę
+            } else {
+                document.getElementById('post-result').innerText = "Błąd dodawania. Kod: " + res.status;
+            }
+        })
+        .catch(err => document.getElementById('post-result').innerText = 'Błąd: ' + err);
+    }
+
+    // --- PUT ---
+    function updateUser() {
+        const id = document.getElementById('put-id').value;
+        const name = document.getElementById('put-name').value;
+        const email = document.getElementById('put-email').value;
+
+        // Budowanie URL z parametrami zapytania (RequestParam w Springu)
+        let url = `${API_URL}/${id}?`;
+        if (name) url += `name=${encodeURIComponent(name)}&`;
+        if (email) url += `email=${encodeURIComponent(email)}`;
+
+        fetch(url, { method: 'PUT' })
+        .then(res => {
+            if (res.ok) {
+                document.getElementById('put-result').innerText = "Sukces! Zaktualizowano dane.";
+                getUsers();
+            } else {
+                document.getElementById('put-result').innerText = "Błąd aktualizacji. Kod: " + res.status;
+            }
+        })
+        .catch(err => document.getElementById('put-result').innerText = 'Błąd: ' + err);
+    }
+
+    // --- DELETE ---
+    function deleteUser() {
+        const id = document.getElementById('delete-id').value;
+
+        fetch(`${API_URL}/${id}`, { method: 'DELETE' })
+        .then(res => {
+            if (res.ok) {
+                document.getElementById('delete-result').innerText = "Sukces! Usunięto użytkownika.";
+                getUsers();
+            } else {
+                document.getElementById('delete-result').innerText = "Błąd usuwania. Kod: " + res.status;
+            }
+        })
+        .catch(err => document.getElementById('delete-result').innerText = 'Błąd: ' + err);
+    }
+</script>
+</body>
+</html>

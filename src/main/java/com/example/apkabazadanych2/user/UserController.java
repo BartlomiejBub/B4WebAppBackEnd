@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "api/v1/user")
 public class UserController {
@@ -13,9 +14,7 @@ public class UserController {
 
     @Autowired
     public UserController(UserService userService){
-
         this.userService = userService;
-
     }
 
     @GetMapping
@@ -40,4 +39,6 @@ public class UserController {
             @RequestParam(required = false) String email){
         userService.updateUser(userId, name, email);
     }
+
+
 }

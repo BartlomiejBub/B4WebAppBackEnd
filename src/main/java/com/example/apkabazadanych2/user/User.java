@@ -1,14 +1,24 @@
 package com.example.apkabazadanych2.user;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
-import java.time.Period;
+import java.util.Collection;
+import java.util.Collections;
 
-
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     @SequenceGenerator(
             name = "user_sequence",
@@ -21,78 +31,60 @@ public class User {
     )
 
     public Long ID_User;
-    public String Name;
-    public String Surname;
-    public String Login;
-    public String Password;
-    public String Email;
-    public LocalDate DateOfBirth;
+    public String name;
+    public String surname;
+    public String login;
+    public String password;
+    public String email;
+    public UserRole userRole;
+    public Boolean enabled = false;
+    public Boolean locked = false;
 
-    @Transient
-    public Integer Age;
-
-    public User(String name, String surname, String login, String password, String email, LocalDate dateOfBirth) {
-        Name = name;
-        Surname = surname;
-        Login = login;
-        Password = password;
-        Email = email;
-        DateOfBirth = dateOfBirth;
-    }
-
-    public User() {
-
-    }
-
-    public String getName() {
-        return Name;
-    }
-
-    public void setName(String name) {
-        Name = name;
-    }
-
-    public Long getID_User() {
-        return ID_User;
-    }
-
-    public void setID_User(Long ID_User) {
+    public User(Long ID_User, String name, String surname, String login, String password, String email) {
         this.ID_User = ID_User;
+        this.name = name;
+        this.surname = surname;
+        this.login = login;
+        this.password = password;
+        this.email = email;
+        this.userRole = UserRole.USER;
     }
 
-    public String getSurname() {
-        return Surname;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
+        return Collections.singletonList(authority);
     }
 
-    public void setSurname(String surname) {
-        Surname = surname;
+    @Override
+    public String getUsername() {
+        return login;
     }
 
+    @Override
     public String getPassword() {
-        return Password;
+        return password;
     }
 
-    public void setPassword(String password) {
-        Password = password;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getLogin() {
-        return Login;
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
     }
 
-    public void setLogin(String login) {
-        Login = login;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public String getEmail() {
-        return Email;
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setEmail(String email) {
-        Email = email;
-    }
 
-    public Integer getAge(){
-        return Period.between(DateOfBirth, LocalDate.now()).getYears();
-    }
 }
