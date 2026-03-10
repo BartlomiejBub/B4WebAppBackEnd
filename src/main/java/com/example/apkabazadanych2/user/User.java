@@ -1,5 +1,7 @@
 package com.example.apkabazadanych2.user;
 
+import com.example.apkabazadanych2.registration.token.ConfirmationToken;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,6 +42,10 @@ public class User implements UserDetails {
     public UserRole userRole;
     public Boolean enabled = false;
     public Boolean locked = false;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<ConfirmationToken> tokens;
 
     public User(Long ID_User, String name, String surname, String login, String password, String email) {
         this.ID_User = ID_User;
