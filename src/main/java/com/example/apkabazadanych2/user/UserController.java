@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -32,13 +33,13 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
-    @PutMapping(path = "/{userId}")
-    public void updateUser(
-            @PathVariable("userId") Long userId,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String email){
-        userService.updateUser(userId, name, email);
+    @PutMapping
+    public void updateUser(@RequestBody User user){
+        userService.updateUser(user);
     }
+
+    @GetMapping(path = "/{userLogin}")
+    public Optional<User> getUser(@PathVariable("userLogin") String userLogin){return userService.getUser(userLogin);}
 
 
 }

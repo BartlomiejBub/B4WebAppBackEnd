@@ -6,20 +6,18 @@ import com.example.apkabazadanych2.registration.token.ConfirmationToken;
 import com.example.apkabazadanych2.registration.token.ConfirmationTokenService;
 import com.example.apkabazadanych2.security.PasswordEncoder;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+
 
 @Service
 @AllArgsConstructor
@@ -103,8 +101,6 @@ public class UserService implements UserDetailsService {
                 """.formatted(name, link);
     }
 
-
-
     public List<User> getUsers(){
         return userRepository.findAll();
     }
@@ -117,8 +113,21 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void updateUser(Long userId, String name, String email) {
+    @Transactional
+    public void updateUser(User user){
+        Optional<User> userOptional = userRepository.findByEmail(user.email);
+        if (userOptional.isPresent() && !Objects.equals(userOptional.get().getLogin(), user.login)) {
+            throw new IllegalStateException("Ten email jest już zajęty");
+        } else {
+            user.setName(user.name);
+            user.setSurname(user.surname);
+            user.setSurname(user.surname);
+        }
+        userRepository.save(user);
+    }
 
+    public Optional<User> getUser(String userLogin){
+        return userRepository.findByLogin(userLogin);
     }
 
     @Override

@@ -23,6 +23,7 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v*/user/**").permitAll()
+                        .requestMatchers("/api/v*/user").permitAll()
                         .requestMatchers("/api/v*/registration/**").permitAll()
                         .anyRequest().authenticated()
                 )
