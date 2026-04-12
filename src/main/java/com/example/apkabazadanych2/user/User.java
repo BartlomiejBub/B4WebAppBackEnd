@@ -1,5 +1,7 @@
 package com.example.apkabazadanych2.user;
 
+import com.example.apkabazadanych2.product.Product;
+import com.example.apkabazadanych2.recipe.Recipe;
 import com.example.apkabazadanych2.registration.token.ConfirmationToken;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -43,9 +45,13 @@ public class User implements UserDetails {
     public Boolean enabled = false;
     public Boolean locked = false;
 
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<ConfirmationToken> tokens;
+    private List<Product> createdProducts;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Recipe> createdRecipes;
 
     public User(Long ID_User, String name, String surname, String login, String password, String email) {
         this.ID_User = ID_User;
@@ -57,9 +63,11 @@ public class User implements UserDetails {
         this.userRole = UserRole.USER;
     }
 
+
+    // WAŻNE !! DO AUTORYZACJI
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + userRole.name());
         return Collections.singletonList(authority);
     }
 
@@ -93,5 +101,6 @@ public class User implements UserDetails {
         return enabled;
     }
 
+    // WAŻNE DO AUTORYACJI
 
 }

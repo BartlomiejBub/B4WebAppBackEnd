@@ -1,5 +1,6 @@
 package com.example.apkabazadanych2.user;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +42,6 @@ public class UserController {
     @GetMapping(path = "/{userLogin}")
     public Optional<User> getUser(@PathVariable("userLogin") String userLogin){return userService.getUser(userLogin);}
 
-
+    @PostMapping(path = "/login/try")
+    public LoginResponse loginUser(@RequestBody LoginRequest loginRequest){return userService.loginUser(loginRequest.login, loginRequest.password);}
 }

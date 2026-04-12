@@ -3,6 +3,9 @@ package com.example.apkabazadanych2.registration.token;
 import com.example.apkabazadanych2.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.engine.internal.Cascade;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +18,7 @@ import java.time.LocalDateTime;
 public class ConfirmationToken {
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(
             nullable = false,
             name = "user_id"

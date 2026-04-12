@@ -136,4 +136,17 @@ public class UserService implements UserDetailsService {
         return userRepository.findByLogin(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found: " +username));
     }
+
+    public LoginResponse loginUser(String login, String password){
+        Optional<User> check = getUser(login);
+        if(check.isPresent()){
+            if(passwordEncoder.bCryptPasswordEncoder().matches(password, check.get().password)){
+                return new LoginResponse("SUCCESS", login, check.get().email, check.get().userRole.name(), check.get().ID_User);
+            } else {
+                return new LoginResponse("WRONG PASSWORD", login, null, null, check.get().ID_User);
+            }
+        } else {
+            return new LoginResponse("WRONG LOGIN", login, null, null, check.get().ID_User);
+        }
+    }
 }
