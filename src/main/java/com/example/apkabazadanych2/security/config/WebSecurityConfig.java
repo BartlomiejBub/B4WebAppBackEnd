@@ -44,6 +44,13 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/productsByUser/**").permitAll()
                         .requestMatchers("/api/v1/productsCreatedByUsers/**").permitAll()
                         .requestMatchers("/api/v1/productsCreatedByUsers").permitAll()
+                        .requestMatchers("/api/v1/recipe/").permitAll()
+                        .requestMatchers("/api/v1/recipe/**").permitAll()
+                        .requestMatchers("/api/v1/recipe/getProductsFromRecipe/").permitAll()
+                        .requestMatchers("/api/v1/recipe/getProductsFromRecipe/**").permitAll()
+
+
+
                         .requestMatchers("/error").permitAll()
 
                         .anyRequest().authenticated()

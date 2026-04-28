@@ -13,4 +13,5 @@ public class ProductByUserAddRequest {
     public Long userID;
     public Long productID;
     public Long weight;
+    public Long time;
 }

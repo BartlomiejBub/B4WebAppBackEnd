@@ -29,7 +29,8 @@ public class ProductsByUsersService {
                 row.getProduct().protein * row.getWeight()/100,
                 row.getProduct().fat * row.getWeight()/100,
                 row.getProduct().carbs * row.getWeight()/100,
-                row.getWeight()
+                row.getWeight(),
+                row.getTime()
                 )
         ).toList();
     }
@@ -39,7 +40,7 @@ public class ProductsByUsersService {
     }
 
     public void addNewProductByUsers(ProductByUserAddRequest productByUserAddRequest){
-        ProductsByUsers productByUser = new ProductsByUsers(null, userRepository.getReferenceById(productByUserAddRequest.userID), productRepository.getReferenceById(productByUserAddRequest.productID), productByUserAddRequest.date, productByUserAddRequest.weight);
+        ProductsByUsers productByUser = new ProductsByUsers(null, userRepository.getReferenceById(productByUserAddRequest.userID), productRepository.getReferenceById(productByUserAddRequest.productID), productByUserAddRequest.date, productByUserAddRequest.weight, productByUserAddRequest.time);
         productsByUsersRepository.save(productByUser);
     }
 

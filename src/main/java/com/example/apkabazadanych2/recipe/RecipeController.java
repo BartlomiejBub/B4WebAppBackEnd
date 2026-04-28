@@ -38,6 +38,11 @@ public class RecipeController {
         return recipeProductListService.getRecipeProductList(recipeID);
     }
 
+    @GetMapping(path = "/getProductsWeightsFromRecipe/{recipeID}")
+    public List<Long> getProductsWeightsFromRecipe(@PathVariable("recipeID") Long recipeID){
+        return recipeProductListService.getRecipeProductWeightList(recipeID);
+    }
+
     @GetMapping(path = "/getProductsFromRecipe")
     public List<RecipeProductList> getProductsFromRecipes(@PathVariable("recipeID") Long recipeID){
         return recipeProductListService.getRecipesProductList();
@@ -46,13 +51,13 @@ public class RecipeController {
     @PostMapping(path = "/{userID}")
     public Recipe addNewRecipe(@RequestBody RecipeAddRequest recipeAddRequest, @PathVariable("userID") Long userID){
         Recipe addedRecipe =  recipeService.addRecipe(recipeAddRequest.recipe, userID);
-        recipeProductListService.addRecipeProductList(recipeAddRequest.productIDs, addedRecipe.ID_Recipe);
+        recipeProductListService.addRecipeProductList(recipeAddRequest.productIDs, addedRecipe.ID_Recipe, recipeAddRequest.weights);
         return recipeAddRequest.recipe;
     }
 
-    @DeleteMapping(path = "/{recipeID}") // do zrobienia!!!!!!
+    @DeleteMapping(path = "/{recipeID}")
     public void deleteRecipe(@PathVariable("recipeID") Long recipeID){
-
+        recipeService.deleteRecipe(recipeID);
     }
 
 }

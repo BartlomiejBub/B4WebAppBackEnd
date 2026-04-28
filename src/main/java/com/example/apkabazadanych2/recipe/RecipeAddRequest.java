@@ -10,4 +10,5 @@ import java.util.List;
 public class RecipeAddRequest {
     public Recipe recipe;
     public List<Long> productIDs;
+    public List<Long> weights;
 }

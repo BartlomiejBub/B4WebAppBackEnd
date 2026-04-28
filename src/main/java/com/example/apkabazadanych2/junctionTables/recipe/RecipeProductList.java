@@ -50,4 +50,6 @@ public class RecipeProductList {
         }
         return null;
     }
+
+    public Long weight;
 }

@@ -28,6 +28,7 @@ public class ProductsByUsers {
     )
 
     public Long ID_productsByUsers;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "ID_User", nullable = false)
     private User user;
@@ -39,6 +40,6 @@ public class ProductsByUsers {
 
     public LocalDate date;
     public Long weight;
-
+    public Long time;
 
 }

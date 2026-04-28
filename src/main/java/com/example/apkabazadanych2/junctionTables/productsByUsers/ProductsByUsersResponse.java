@@ -11,4 +11,5 @@ public class ProductsByUsersResponse {
     public Long fatCalculated;
     public Long carbsCalculated;
     public Long weight;
+    public Long time;
 }
