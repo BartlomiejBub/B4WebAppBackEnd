@@ -48,6 +48,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/v1/recipe/**").permitAll()
                         .requestMatchers("/api/v1/recipe/getProductsFromRecipe/").permitAll()
                         .requestMatchers("/api/v1/recipe/getProductsFromRecipe/**").permitAll()
+                        .requestMatchers("/api/v1/recipesByUser/**").permitAll()
+                        .requestMatchers("/api/v1/recipesByUser").permitAll()
+                        .requestMatchers("/api/v1/recipesByUser/add").permitAll()
+                        .requestMatchers("/api/v1/recipesByUser/add/**").permitAll()
+
 
 
 
