@@ -5,6 +5,7 @@ import com.example.apkabazadanych2.junctionTables.productsByUsers.ProductsByUser
 import com.example.apkabazadanych2.junctionTables.productsByUsers.ProductsByUsersRepository;
 import com.example.apkabazadanych2.junctionTables.productsByUsers.ProductsByUsersResponse;
 import com.example.apkabazadanych2.product.ProductRepository;
+import com.example.apkabazadanych2.recipe.Recipe;
 import com.example.apkabazadanych2.recipe.RecipeRepository;
 import com.example.apkabazadanych2.user.User;
 import com.example.apkabazadanych2.user.UserRepository;
@@ -25,17 +26,29 @@ public class RecipesByUsersService {
     public List<ProductsByUsersResponse> findByUserAndDate(Long userID, LocalDate date){
         User user = userRepository.findById(userID).orElseThrow( () -> new IllegalStateException("Nie znaleziono"));
         List<RecipesByUsers> listOfRaw = recipeByUsersRepository.findByUserAndDate(user, date);
-        return listOfRaw.stream().map(row -> new ProductsByUsersResponse(
-                        row.getID_recipesByUsers(),
-                        row.getRecipe().name,
-                        row.getRecipe().caloric * row.getWeight()/100,
-                        row.getRecipe().protein * row.getWeight()/100,
-                        row.getRecipe().fat * row.getWeight()/100,
-                        row.getRecipe().carbs * row.getWeight()/100,
-                        row.getWeight(),
-                        row.getTime()
-                )
+        return listOfRaw.stream().map(row -> {
+                    // Makroskładniki przepisu są podane dla całego przepisu (porcje * waga porcji)
+                    long totalGrams = recipeTotalGrams(row.getRecipe());
+                    return new ProductsByUsersResponse(
+                            row.getID_recipesByUsers(),
+                            row.getRecipe().name,
+                            row.getRecipe().caloric * row.getWeight() / totalGrams,
+                            row.getRecipe().protein * row.getWeight() / totalGrams,
+                            row.getRecipe().fat * row.getWeight() / totalGrams,
+                            row.getRecipe().carbs * row.getWeight() / totalGrams,
+                            row.getWeight(),
+                            row.getTime()
+                    );
+                }
         ).toList();
+    }
+
+    private long recipeTotalGrams(Recipe recipe){
+        long portion = recipe.portion != null ? recipe.portion : 1;
+        long gramsInOne = recipe.gramsInOne != null ? recipe.gramsInOne : 0;
+        long total = portion * gramsInOne;
+        // Brak wagi przepisu - traktujemy makro jak na 100g, żeby nie dzielić przez 0
+        return total > 0 ? total : 100;
     }
 
     public void deleteRecipeByUsers(Long recipeID){

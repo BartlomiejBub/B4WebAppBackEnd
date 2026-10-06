@@ -33,6 +33,11 @@ public class RecipeController {
         return recipeService.getRecipes();
     }
 
+    @GetMapping(path = "/withProducts")
+    public List<RecipeWithProductsResponse> getRecipesWithProducts(){
+        return recipeService.getRecipesWithProducts();
+    }
+
     @GetMapping(path = "/getProductsFromRecipe/{recipeID}")
     public List<Product> getProductsFromRecipe(@PathVariable("recipeID") Long recipeID){
         return recipeProductListService.getRecipeProductList(recipeID);
@@ -41,11 +46,6 @@ public class RecipeController {
     @GetMapping(path = "/getProductsWeightsFromRecipe/{recipeID}")
     public List<Long> getProductsWeightsFromRecipe(@PathVariable("recipeID") Long recipeID){
         return recipeProductListService.getRecipeProductWeightList(recipeID);
-    }
-
-    @GetMapping(path = "/getProductsFromRecipe")
-    public List<RecipeProductList> getProductsFromRecipes(@PathVariable("recipeID") Long recipeID){
-        return recipeProductListService.getRecipesProductList();
     }
 
     @PostMapping(path = "/{userID}")
