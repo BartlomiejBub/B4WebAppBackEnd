@@ -32,10 +32,10 @@ public class RecipesByUsersService {
                     return new ProductsByUsersResponse(
                             row.getID_recipesByUsers(),
                             row.getRecipe().name,
-                            row.getRecipe().caloric * row.getWeight() / totalGrams,
-                            row.getRecipe().protein * row.getWeight() / totalGrams,
-                            row.getRecipe().fat * row.getWeight() / totalGrams,
-                            row.getRecipe().carbs * row.getWeight() / totalGrams,
+                            ProductsByUsersResponse.round1(row.getRecipe().caloric * row.getWeight() / totalGrams),
+                            ProductsByUsersResponse.round1(row.getRecipe().protein * row.getWeight() / totalGrams),
+                            ProductsByUsersResponse.round1(row.getRecipe().fat * row.getWeight() / totalGrams),
+                            ProductsByUsersResponse.round1(row.getRecipe().carbs * row.getWeight() / totalGrams),
                             row.getWeight(),
                             row.getTime()
                     );

@@ -25,10 +25,10 @@ public class ProductsByUsersService {
         return listOfRaw.stream().map(row -> new ProductsByUsersResponse(
                     row.getID_productsByUsers(),
                     row.getProduct().name,
-                row.getProduct().caloric * row.getWeight()/100,
-                row.getProduct().protein * row.getWeight()/100,
-                row.getProduct().fat * row.getWeight()/100,
-                row.getProduct().carbs * row.getWeight()/100,
+                ProductsByUsersResponse.round1(row.getProduct().caloric * row.getWeight() / 100.0),
+                ProductsByUsersResponse.round1(row.getProduct().protein * row.getWeight() / 100.0),
+                ProductsByUsersResponse.round1(row.getProduct().fat * row.getWeight() / 100.0),
+                ProductsByUsersResponse.round1(row.getProduct().carbs * row.getWeight() / 100.0),
                 row.getWeight(),
                 row.getTime()
                 )
