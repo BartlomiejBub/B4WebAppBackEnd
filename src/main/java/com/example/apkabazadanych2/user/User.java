@@ -48,6 +48,17 @@ public class User implements UserDetails {
     public Boolean enabled = false;
     public Boolean locked = false;
 
+    // Domyślne dzienne cele - nowy użytkownik dostaje je automatycznie
+    public static final double DEFAULT_GOAL_KCAL = 2500;
+    public static final double DEFAULT_GOAL_PROTEIN = 160;
+    public static final double DEFAULT_GOAL_FAT = 80;
+    public static final double DEFAULT_GOAL_CARBS = 280;
+
+    public Double goalKcal = DEFAULT_GOAL_KCAL;
+    public Double goalProtein = DEFAULT_GOAL_PROTEIN;
+    public Double goalFat = DEFAULT_GOAL_FAT;
+    public Double goalCarbs = DEFAULT_GOAL_CARBS;
+
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Product> createdProducts;

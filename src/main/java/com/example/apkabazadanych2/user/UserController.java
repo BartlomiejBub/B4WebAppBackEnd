@@ -42,6 +42,16 @@ public class UserController {
     @GetMapping(path = "/{userLogin}")
     public Optional<User> getUser(@PathVariable("userLogin") String userLogin){return userService.getUser(userLogin);}
 
+    @GetMapping(path = "/{userId}/goals")
+    public UserGoals getGoals(@PathVariable("userId") Long userId){
+        return userService.getGoals(userId);
+    }
+
+    @PutMapping(path = "/{userId}/goals")
+    public UserGoals updateGoals(@PathVariable("userId") Long userId, @RequestBody UserGoals goals){
+        return userService.updateGoals(userId, goals);
+    }
+
     @PostMapping(path = "/login/try")
     public LoginResponse loginUser(@RequestBody LoginRequest loginRequest){return userService.loginUser(loginRequest.login, loginRequest.password);}
 }

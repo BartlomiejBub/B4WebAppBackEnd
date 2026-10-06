@@ -43,6 +43,11 @@ public class UserService implements UserDetailsService {
             } else {
 
                 user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword()));
+                // Nowe konto zawsze startuje z domyślnymi celami (można je zmienić na stronie "Moje cele")
+                user.setGoalKcal(User.DEFAULT_GOAL_KCAL);
+                user.setGoalProtein(User.DEFAULT_GOAL_PROTEIN);
+                user.setGoalFat(User.DEFAULT_GOAL_FAT);
+                user.setGoalCarbs(User.DEFAULT_GOAL_CARBS);
                 userRepository.save(user);
 
                 String token =  UUID.randomUUID().toString();
@@ -129,6 +134,31 @@ public class UserService implements UserDetailsService {
         existing.setEnabled(user.enabled);
         existing.setLocked(user.locked);
         userRepository.save(existing);
+    }
+
+    public UserGoals getGoals(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User with id " + userId + " dont exists"));
+        return new UserGoals(user.goalKcal, user.goalProtein, user.goalFat, user.goalCarbs);
+    }
+
+    @Transactional
+    public UserGoals updateGoals(Long userId, UserGoals goals){
+        if (!isValidGoal(goals.goalKcal) || !isValidGoal(goals.goalProtein) || !isValidGoal(goals.goalFat) || !isValidGoal(goals.goalCarbs)) {
+            throw new IllegalStateException("Cele muszą być liczbami większymi lub równymi 0");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User with id " + userId + " dont exists"));
+        user.setGoalKcal(goals.goalKcal);
+        user.setGoalProtein(goals.goalProtein);
+        user.setGoalFat(goals.goalFat);
+        user.setGoalCarbs(goals.goalCarbs);
+        userRepository.save(user);
+        return getGoals(userId);
+    }
+
+    private boolean isValidGoal(Double value){
+        return value != null && value >= 0 && !value.isInfinite();
     }
 
     public Optional<User> getUser(String userLogin){
