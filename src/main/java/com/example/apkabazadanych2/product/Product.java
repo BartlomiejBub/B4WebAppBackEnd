@@ -28,10 +28,10 @@ public class Product {
 
     public Long ID_Product;
     public String name;
-    public Long caloric;
-    public Long protein;
-    public Long carbs;
-    public Long fat;
+    public Double caloric;
+    public Double protein;
+    public Double carbs;
+    public Double fat;
     public Long gramsInOne;
     public String code;
 

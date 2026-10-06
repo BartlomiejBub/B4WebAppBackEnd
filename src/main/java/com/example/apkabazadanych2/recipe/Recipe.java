@@ -35,10 +35,10 @@ public class Recipe {
 
     public Long timeToCook;
 
-    public Long caloric;
-    public Long protein;
-    public Long carbs;
-    public Long fat;
+    public Double caloric;
+    public Double protein;
+    public Double carbs;
+    public Double fat;
 
     public Long gramsInOne;
     public Long portion;
