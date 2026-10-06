@@ -118,12 +118,17 @@ public class UserService implements UserDetailsService {
         Optional<User> userOptional = userRepository.findByEmail(user.email);
         if (userOptional.isPresent() && !Objects.equals(userOptional.get().getLogin(), user.login)) {
             throw new IllegalStateException("Ten email jest już zajęty");
-        } else {
-            user.setName(user.name);
-            user.setSurname(user.surname);
-            user.setSurname(user.surname);
         }
-        userRepository.save(user);
+        // Aktualizujemy istniejącego użytkownika, żeby nie nadpisać hasła (frontend go nie dostaje)
+        User existing = userRepository.findById(user.ID_User)
+                .orElseThrow(() -> new IllegalStateException("User with id " + user.ID_User + " dont exists"));
+        existing.setName(user.name);
+        existing.setSurname(user.surname);
+        existing.setEmail(user.email);
+        existing.setUserRole(user.userRole);
+        existing.setEnabled(user.enabled);
+        existing.setLocked(user.locked);
+        userRepository.save(existing);
     }
 
     public Optional<User> getUser(String userLogin){
@@ -146,7 +151,7 @@ public class UserService implements UserDetailsService {
                 return new LoginResponse("WRONG PASSWORD", login, null, null, check.get().ID_User);
             }
         } else {
-            return new LoginResponse("WRONG LOGIN", login, null, null, check.get().ID_User);
+            return new LoginResponse("WRONG LOGIN", login, null, null, null);
         }
     }
 }

@@ -18,6 +18,12 @@ public interface RecipeProductListRepository extends JpaRepository<RecipeProduct
     @Query("SELECT r.weight FROM RecipeProductList r WHERE r.recipe.ID_Recipe = :id")
     List<Long> findProductsWeightsByRecipeID(@Param("id") Long id);
 
+    @Query("SELECT r FROM RecipeProductList r ORDER BY r.ID_RecipeProductList")
+    List<RecipeProductList> findAllOrdered();
+
+    @Query("SELECT COUNT(r) > 0 FROM RecipeProductList r WHERE r.product.ID_Product = :id")
+    boolean existsByProductID(@Param("id") Long id);
+
     @Modifying
     @Query("DELETE FROM RecipeProductList r WHERE r.recipe.ID_Recipe = :id")
     void deleteByRecipeId(@Param("id") Long id);

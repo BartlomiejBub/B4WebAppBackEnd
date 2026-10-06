@@ -4,6 +4,7 @@ import com.example.apkabazadanych2.product.Product;
 import com.example.apkabazadanych2.recipe.Recipe;
 import com.example.apkabazadanych2.registration.token.ConfirmationToken;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,6 +40,8 @@ public class User implements UserDetails {
     public String name;
     public String surname;
     public String login;
+    // Hasło można wysłać (rejestracja), ale nigdy nie jest zwracane w JSON
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String password;
     public String email;
     public UserRole userRole;
