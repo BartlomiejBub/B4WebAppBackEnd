@@ -20,7 +20,7 @@ public class ProductsByUsersService {
     private final ProductRepository productRepository;
 
     public List<ProductsByUsersResponse> findByUserAndDate(Long userID, LocalDate date){
-        User user = userRepository.findById(userID).orElseThrow( () -> new IllegalStateException("Nie znaleziono"));
+        User user = userRepository.findById(userID).orElseThrow();
         List<ProductsByUsers> listOfRaw = productsByUsersRepository.findByUserAndDate(user, date);
         return listOfRaw.stream().map(row -> new ProductsByUsersResponse(
                     row.getID_productsByUsers(),

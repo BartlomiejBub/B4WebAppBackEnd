@@ -124,7 +124,6 @@ public class UserService implements UserDetailsService {
         if (userOptional.isPresent() && !Objects.equals(userOptional.get().getLogin(), user.login)) {
             throw new IllegalStateException("Ten email jest już zajęty");
         }
-        // Aktualizujemy istniejącego użytkownika, żeby nie nadpisać hasła (frontend go nie dostaje)
         User existing = userRepository.findById(user.ID_User)
                 .orElseThrow(() -> new IllegalStateException("User with id " + user.ID_User + " dont exists"));
         existing.setName(user.name);

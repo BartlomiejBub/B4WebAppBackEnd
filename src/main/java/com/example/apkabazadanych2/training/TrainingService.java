@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class TrainingService {
+
     private TrainingRepository trainingRepository;
     private TrainingExerciseListRepository trainingExerciseListRepository;
     private UserRepository userRepository;

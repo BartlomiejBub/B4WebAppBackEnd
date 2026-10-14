@@ -38,12 +38,12 @@ public class TrainingController {
     }
 
     @GetMapping(path = "/getExercisesFromTraining/{trainingID}")
-    public List<Exercise> getProductsFromRecipe(@PathVariable("trainingID") Long trainingID){
+    public List<Exercise> getExercisesFromTraining(@PathVariable("trainingID") Long trainingID){
         return trainingExerciseListService.getTrainingExerciseList(trainingID);
     }
 
     @GetMapping(path = "/getExercisesRepsFromRecipe/{trainingID}")
-    public List<Long> getProductsWeightsFromRecipe(@PathVariable("trainingID") Long trainingID){
+    public List<Long> getExercisesRepsFromTraining(@PathVariable("trainingID") Long trainingID){
         return trainingExerciseListService.getExercisesRepsByTrainingList(trainingID);
     }
 
