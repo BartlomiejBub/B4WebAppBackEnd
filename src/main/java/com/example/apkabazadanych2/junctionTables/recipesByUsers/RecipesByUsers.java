@@ -38,7 +38,7 @@ public class RecipesByUsers {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "ID_Product", nullable = false)
+    @JoinColumn(name = "ID_Recipe", nullable = false)
     private Recipe recipe;
 
     public LocalDate date;
