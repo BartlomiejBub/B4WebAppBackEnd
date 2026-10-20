@@ -3,7 +3,7 @@ package com.example.apkabazadanych2.user;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-// Dzienne cele użytkownika (kcal i makroskładniki w gramach)
+// User's daily goals (kcal and macros in grams)
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserGoals {

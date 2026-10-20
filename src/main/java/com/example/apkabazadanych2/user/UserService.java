@@ -43,7 +43,7 @@ public class UserService implements UserDetailsService {
             } else {
 
                 user.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(user.getPassword()));
-                // Nowe konto zawsze startuje z domyślnymi celami (można je zmienić na stronie "Moje cele")
+                // A new account always starts with default goals (they can be changed on the "My goals" page)
                 user.setGoalKcal(User.DEFAULT_GOAL_KCAL);
                 user.setGoalProtein(User.DEFAULT_GOAL_PROTEIN);
                 user.setGoalFat(User.DEFAULT_GOAL_FAT);
@@ -122,7 +122,7 @@ public class UserService implements UserDetailsService {
     public void updateUser(User user){
         Optional<User> userOptional = userRepository.findByEmail(user.email);
         if (userOptional.isPresent() && !Objects.equals(userOptional.get().getLogin(), user.login)) {
-            throw new IllegalStateException("Ten email jest już zajęty");
+            throw new IllegalStateException("This email is already taken");
         }
         User existing = userRepository.findById(user.ID_User)
                 .orElseThrow(() -> new IllegalStateException("User with id " + user.ID_User + " dont exists"));
@@ -144,7 +144,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserGoals updateGoals(Long userId, UserGoals goals){
         if (!isValidGoal(goals.goalKcal) || !isValidGoal(goals.goalProtein) || !isValidGoal(goals.goalFat) || !isValidGoal(goals.goalCarbs)) {
-            throw new IllegalStateException("Cele muszą być liczbami większymi lub równymi 0");
+            throw new IllegalStateException("Goals must be numbers greater than or equal to 0");
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("User with id " + userId + " dont exists"));

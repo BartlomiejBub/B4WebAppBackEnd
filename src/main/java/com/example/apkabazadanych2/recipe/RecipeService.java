@@ -56,7 +56,7 @@ public class RecipeService {
     @Transactional
     public void deleteRecipe(Long recipeID){
         if (recipesByUsersRepository.existsByRecipeID(recipeID)) {
-            throw new IllegalStateException("Nie można usunąć przepisu - jest zapisany w historii zjedzonych posiłków");
+            throw new IllegalStateException("Cannot delete the recipe - it is saved in the eaten meals history");
         }
         recipeProductListRepository.deleteByRecipeId(recipeID);
         recipeRepository.deleteById(recipeID);

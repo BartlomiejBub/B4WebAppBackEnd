@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-// Przepis razem ze składnikami - products.get(i) ma wagę weights.get(i)
+// Recipe together with its ingredients - products.get(i) has weight weights.get(i)
 @AllArgsConstructor
 public class RecipeWithProductsResponse {
     public Recipe recipe;

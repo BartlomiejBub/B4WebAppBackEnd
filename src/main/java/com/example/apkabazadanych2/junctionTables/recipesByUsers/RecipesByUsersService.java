@@ -24,10 +24,10 @@ public class RecipesByUsersService {
     private final RecipeRepository recipeRepository;
 
     public List<ProductsByUsersResponse> findByUserAndDate(Long userID, LocalDate date){
-        User user = userRepository.findById(userID).orElseThrow( () -> new IllegalStateException("Nie znaleziono"));
+        User user = userRepository.findById(userID).orElseThrow( () -> new IllegalStateException("User not found"));
         List<RecipesByUsers> listOfRaw = recipeByUsersRepository.findByUserAndDate(user, date);
         return listOfRaw.stream().map(row -> {
-                    // Makroskładniki przepisu są podane dla całego przepisu (porcje * waga porcji)
+                    // Recipe macros are stored for the whole recipe (portions * portion weight)
                     long totalGrams = recipeTotalGrams(row.getRecipe());
                     return new ProductsByUsersResponse(
                             row.getID_recipesByUsers(),
@@ -47,7 +47,7 @@ public class RecipesByUsersService {
         long portion = recipe.portion != null ? recipe.portion : 1;
         long gramsInOne = recipe.gramsInOne != null ? recipe.gramsInOne : 0;
         long total = portion * gramsInOne;
-        // Brak wagi przepisu - traktujemy makro jak na 100g, żeby nie dzielić przez 0
+        // No recipe weight - treat macros as per 100 g to avoid dividing by 0
         return total > 0 ? total : 100;
     }
 

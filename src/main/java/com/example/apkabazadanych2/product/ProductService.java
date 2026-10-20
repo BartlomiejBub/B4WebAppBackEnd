@@ -23,10 +23,10 @@ public class ProductService {
 
     public void deleteProduct(Long productID){
         if (recipeProductListRepository.existsByProductID(productID)) {
-            throw new IllegalStateException("Nie można usunąć produktu - jest składnikiem przepisu");
+            throw new IllegalStateException("Cannot delete the product - it is an ingredient of a recipe");
         }
         if (productsByUsersRepository.existsByProductID(productID)) {
-            throw new IllegalStateException("Nie można usunąć produktu - jest zapisany w historii zjedzonych posiłków");
+            throw new IllegalStateException("Cannot delete the product - it is saved in the eaten meals history");
         }
         productRepository.deleteById(productID);
     }

@@ -39,7 +39,7 @@ public class User implements UserDetails {
     public String name;
     public String surname;
     public String login;
-    // Hasło można wysłać (rejestracja), ale nigdy nie jest zwracane w JSON
+    // Password can be sent (registration), but is never returned in JSON
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     public String password;
     public String email;
@@ -47,7 +47,7 @@ public class User implements UserDetails {
     public Boolean enabled = false;
     public Boolean locked = false;
 
-    // Domyślne dzienne cele - nowy użytkownik dostaje je automatycznie
+    // Default daily goals - a new user gets them automatically
     public static final double DEFAULT_GOAL_KCAL = 2500;
     public static final double DEFAULT_GOAL_PROTEIN = 160;
     public static final double DEFAULT_GOAL_FAT = 80;
@@ -77,7 +77,7 @@ public class User implements UserDetails {
     }
 
 
-    // WAŻNE !! DO AUTORYZACJI
+    // IMPORTANT !! FOR AUTHORIZATION
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + userRole.name());
@@ -114,6 +114,6 @@ public class User implements UserDetails {
         return enabled;
     }
 
-    // WAŻNE DO AUTORYACJI
+    // IMPORTANT FOR AUTHORIZATION
 
 }
