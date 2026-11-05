@@ -1,5 +1,6 @@
 package com.example.apkabazadanych2.user;
 
+import com.example.apkabazadanych2.security.AuthenticationService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -10,13 +11,16 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "api/v1/user")
+
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService, AuthenticationService authenticationService){
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping
@@ -53,5 +57,5 @@ public class UserController {
     }
 
     @PostMapping(path = "/login/try")
-    public LoginResponse loginUser(@RequestBody LoginRequest loginRequest){return userService.loginUser(loginRequest.login, loginRequest.password);}
+    public LoginResponse loginUser(@RequestBody LoginRequest loginRequest){return authenticationService.loginUser(loginRequest.login, loginRequest.password);}
 }
