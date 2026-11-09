@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Configuration
@@ -27,15 +28,20 @@ public class WebSecurityConfig {
 
     private final BCryptPasswordEncoder bcryptPasswordEncoder;
     private final UserDetailsService userDetailsService;
+    private final JwtFilter jwtFilter;
 
-    public WebSecurityConfig(BCryptPasswordEncoder bcryptPasswordEncoder, UserDetailsService userDetailsService, UserRepository userRepository) {
+
+    public WebSecurityConfig(JwtFilter jwtFilter, BCryptPasswordEncoder bcryptPasswordEncoder, UserDetailsService userDetailsService, UserRepository userRepository) {
         this.bcryptPasswordEncoder = bcryptPasswordEncoder;
         this.userDetailsService = userDetailsService;
+        this.jwtFilter = jwtFilter;
     }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
@@ -59,6 +65,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/error").permitAll()
 
                         .anyRequest().authenticated()
+
                 )
         ;
 
